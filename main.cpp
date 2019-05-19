@@ -1,249 +1,179 @@
 #include <iostream>
+#include <conio.h>
+#include <string.h>
 #include <vector>
-#include <math.h>
-
-//Mihalcea Cosmin, Grupa 133, SG2
-
 using namespace std;
 
 
-class pereche
-{
+class Automobil{
+   float lungime;
+    char model[20];
 
 public:
-
-    int grad;
-    double coef;
-    friend class polinom;
-    friend istream& operator >> (istream&, pereche&);//Supra incarcarea >>
-    friend ostream& operator << (ostream&, pereche&);//supra incarcarea <<
-
+   float get_l(){
+        return lungime;
+    }
+    char *get_c(){
+        return model;
+    }
+virtual void scriere(){};
+friend istream& operator >> (istream&, Automobil&);
 
 };
+ istream& operator >> (istream&in, Automobil&a){
+    cout<<"Model + Lugime\n";
+   in>>a.model>>a.lungime;
+   return in;
+}
 
-class polinom
-{
+//MINI
 
-    vector<pereche> P;
-
+class MINI : public Automobil{
+   static int mini;
+   float l;
+    char model[20];
 public:
+    int get_mini(){
+        return mini;
 
-    friend istream& operator >> (istream&, polinom&);
-    friend ostream& operator << (ostream&, polinom&);
-    polinom operator * (polinom&);
-    polinom operator + (polinom&);
-    polinom operator - (polinom&);
-    friend int evaluare (polinom&,int a);
+    }
+
+    void scriere(){
+cout<<*this;
 
 
+
+    }
+
+    friend ostream& operator << (ostream&, MINI&);
+    friend istream& operator >> (istream&, MINI&);
 
 };
+    ostream& operator << (ostream& o, MINI&mimi){
 
-istream& operator >> (istream& in, pereche& a)//fct de supraincarcare pt citirea perechilor
-{
-    cout<<"Introduceti gradul si coeficientul:\n";
-    in>>a.grad>>a.coef;
-    return in;
+        cout<<mimi.get_c()<<" "<<mimi.get_l()<<" Masini de oras de mic litraj\n";
 
-}
 
-ostream& operator << (ostream& out, pereche& p)//fct de supraincarcare pt scrierea perechilor
-{
-    if(p.coef != 0)
-    {
-        if(p.coef != 1 && p.grad > 0 )
-        {
-            out<<p.coef;
-
-            out<<"*";
-        }
-        if(p.grad > 1)
-        {
-
-            out<<"x^";
-            out<<p.grad;
-            out<<" + ";
-        }
-        else if(p.grad == 1)
-        {
-
-            out<<"x";
-
-            out<<" + ";
-        }
-        if(p.grad == 0)
-        {
-
-            out<<p.coef;
-
-        }
-    }
-    return out;
-}
-
-istream& operator >> (istream& in, polinom& pa)//supraincarcarea >> la polinoame
-{
-    pereche a;
-    in>>a;
-    if(a.coef!=0)
-        pa.P.push_back(a);
-
-    do
-    {
-
-        in>>a;
-        if(a.coef!=0)
-            pa.P.push_back(a);
-
-    }
-    while(a.grad);
-
-    return in;
-}
-
-ostream& operator << (ostream& out, polinom& pa)//supraincarcarea << la polinoame
-{
-    for(int i=0; i<pa.P.size(); i++)
-    {
-        out<<pa.P[i];
+        return o;
     }
 
-    return out;
-}
+    istream& operator >> (istream& in, MINI&mimi){
+        cout<<"Model + Lugime\n";
+        in>>mimi.model>>mimi.l;
+        return in;
+    }
+    //COMPACATA
 
-polinom polinom::operator + (polinom& a)//Adunare
-{
-    polinom suma;
-
-    int i=0, j=0;
-
-    while(i<a.P.size() || j<this->P.size())
-    {
-        pereche p1, p2;
-
-        if(i<a.P.size())
-            p1 = a.P[i];
-        if(j<this->P.size())
-            p2 = this->P[j];
-
-        if(p1.grad == p2.grad)
-        {
-            suma.P.push_back({p1.grad, p1.coef+p2.coef});
-            i++;
-            j++;
+    class COMPACATA : public Automobil{
+        void scriere(){
+            cout<<*this;
         }
-        else if(p1.grad>p2.grad)
-        {
-            suma.P.push_back(p1);
-            i++;
-        }
-        else
-        {
-            suma.P.push_back(p2);
-            j++;
-        }
+    friend ostream& operator << (ostream&, COMPACATA&);
+    friend istream& operator >> (istream&, COMPACATA&);
+
+    };
+    ostream& operator << (ostream& o, COMPACATA&mimi){
+
+        cout<<mimi.get_c()<<" "<<mimi.get_l()<<" Modelele vin sub forma de hatchback, combi sau sedan\n";
+
+
+        return o;
     }
 
-
-    return suma;
-
-}
-
-polinom polinom::operator - (polinom &a)//Scaderea polin
-{
-    polinom diferenta;
-
-    int i=0, j=0;
-
-    while(i<a.P.size() || j<this->P.size())
+    class MONOVOLUME : public Automobil
     {
 
-        pereche p1, p2;
+    };
 
-        if(i<a.P.size())
-            p1 = this->P[i];
-        if(j<this->P.size())
-            p2 = a.P[j];
-
-        if(p1.grad == p2.grad)
-        {
-            diferenta.P.push_back({p1.grad, p1.coef - p2.coef});
-            i++;
-            j++;
-        }
-        else if(p1.grad>p2.grad)
-        {
-            diferenta.P.push_back({p1.grad,-p1.coef});
-            i++;
-        }
-        else
-        {
-            diferenta.P.push_back(p2);
-            j++;
-        }
-    }
+   template <class T>
+   class VANZARE {
 
 
 
-    return diferenta;
-}
+
+            int v;
+           int s;
+      public:
+          vector <T*> v1, v2;
+          VANZARE(){
+              cin>>s;
+              v = 0;
+              for(int i = 0; i < s; i++){
+                T k;
+                cin>>k;
+                v1.push_back(&k);
+              }
+
+          }
+         void vand(){
+              v2.push_back(v1[s]);
+              v1.pop_back();
+              v++;
+              s--;
+          }
+
+         int get_v(){
+              return v;
+          }
+
+         int get_s(){
+             return s;
+         }
 
 
 
-polinom polinom::operator * (polinom& a)//Produsul polinoamelor;
-{
-    polinom produs;
 
 
 
-    for(int i=0; i<a.P.size(); i++)
-    {
-        pereche p1 = a.P[i];
-        polinom produs_aux;
-
-
-        for(int j=0; j<this->P.size(); j++)
-        {
-            pereche p2 = this->P[j];
-
-            produs_aux.P.push_back({p1.grad+p2.grad,p1.coef*p2.coef});
-        }
-
-        produs = produs + produs_aux;
-    }
-
-    return produs;
-//
-//    return a = produs;
 
 
 
-}
+
+
+
+    };
+
+//        template <class A_type> class VANZARE VANZARE <class A_type> :: operator -= (A_type&ob){
+//        }
+
+
 
 
 int main()
 {
-    polinom p, q, k,d;
-    cin>>p>>q;
-    k =  p + q;
-    d =  p - q;
-    cout<<k;
-    cout<<"\n"<<d;
-
-    cout<<"\n"<<evaluare(p,3);
 
 
+//Automobil *a = new Automobil ;
+//
+//    cin>>*a;
+//        if(strcmp("MINI",a->get_c())==0){
+//        MINI * mini = static_cast<MINI*>(a);
+//        cout<< *mini;
+//
+//        }
+//
+//        if(strcmp("COMPACTA",a->get_c())==0){
+//        COMPACATA * mini = static_cast<COMPACATA*>(a);
+//        cout<< *mini;
+//
+//        }
 
-    return 0;
-}
+        VANZARE <Automobil> P;
 
-int evaluare(polinom &p,int a)//Evaluare;
-{
 
-    int val = 0;
-    for(int i=0; i < p.P.size(); i++)
-    {
-        val = val + (pow(a,p.P[i].grad)*p.P[i].coef);
-    }
-    return val;
+        P.vand();
+        cout<<(*P.v2[0]);
+
+
+
+
+
+
+
+
+
+return 0;
+
+
+
 }
